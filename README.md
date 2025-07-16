@@ -233,7 +233,7 @@ Feel free to submit issues, feature requests, or pull requests to improve the ed
 3. **Rich Features**: Tables, code blocks, image uploads, and more
 4. **Keyboard Shortcuts**: Professional-grade shortcuts for power users
 5. **Mobile Friendly**: Works perfectly on all devices
-6. **No Dependencies**: Pure HTML, CSS, and JavaScript (except Tailwind CDN)
+6. **No Dependencies**: Pure HTML, CSS, and JavaScript (except Tailwind CDN and Font Awesome)
 7. **Easy to Customize**: Well-organized code for easy modification
 8. **Production Ready**: Includes security features and error handling
 
