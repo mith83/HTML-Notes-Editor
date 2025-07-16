@@ -1,0 +1,8 @@
+/editor
+  /assets
+    /uploads
+  index.php
+  save.php
+  open.php
+  editor.css
+  editor.js

@@ -1,0 +1,949 @@
+/*
+MIT License
+
+Copyright (c) 2025 ColeNikol
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.editor-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.toolbar {
+    background: #f0f0f0;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.toolbar button, .toolbar select {
+    padding: 5px 10px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    min-height: 30px;
+}
+
+.toolbar button:hover, .toolbar select:hover {
+    background: #e0e0e0;
+}
+
+.toolbar input[type="color"] {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button[data-command^="justify"] {
+    font-size: 16px;
+    padding: 0 8px;
+}
+
+.editor-content {
+    min-height: 500px;
+    padding: 20px;
+    outline: none;
+    text-align: left;
+}
+
+.editor-content:focus {
+    border: 1px solid #aaa;
+}
+
+.editor-content [style*="text-align:left"],
+.editor-content [align="left"] {
+    text-align: left !important;
+}
+
+.editor-content [style*="text-align:center"],
+.editor-content [align="center"] {
+    text-align: center !important;
+}
+
+.editor-content [style*="text-align:right"],
+.editor-content [align="right"] {
+    text-align: right !important;
+}
+
+.html-editor {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.html-code {
+    min-height: 500px;
+    width: 100%;
+    font-family: monospace;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.modal-content label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.modal-content input[type="text"],
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.modal-content textarea {
+    min-height: 100px;
+}
+
+.modal-content button {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background: #0056b3;
+}
+
+@media (max-width: 768px) {
+    .editor-content, .html-code {
+        min-height: 300px;
+    }
+    
+    .toolbar {
+        gap: 3px;
+    }
+    
+    .toolbar button, .toolbar select {
+        padding: 3px 6px;
+        font-size: 12px;
+    }
+    
+    .toolbar input[type="color"] {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+/* Custom styles for the WYSIWYG Editor */
+
+/* Font Awesome fallback system */
+.fallback-text {
+    display: inline;
+    font-weight: bold;
+}
+
+.fas {
+    display: inline;
+}
+
+/* Hide fallback text when Font Awesome is working */
+.fontawesome-loaded .fallback-text {
+    display: none;
+}
+
+/* Show fallback text when Font Awesome is not loaded */
+.no-fontawesome .fas {
+    display: none;
+}
+
+.no-fontawesome .fallback-text {
+    display: inline;
+}
+
+/* Toolbar button styles */
+.toolbar-btn {
+    @apply px-3 py-2 bg-white border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+
+
+.toolbar-btn:hover {
+    @apply bg-blue-50 border-blue-300 shadow-md;
+}
+
+.toolbar-btn:active {
+    @apply bg-blue-100;
+}
+
+.toolbar-btn.active {
+    @apply bg-blue-500 text-white border-blue-500 shadow-lg;
+}
+
+.toolbar-btn.active:hover {
+    @apply bg-blue-600 border-blue-600;
+}
+
+.toolbar-select {
+    @apply px-3 py-2 bg-white border border-gray-300 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.toolbar-select:hover {
+    @apply bg-blue-50 border-blue-300 shadow-md;
+}
+
+.toolbar-select:focus {
+    @apply bg-blue-50 border-blue-500;
+}
+
+/* Action button styles */
+.action-btn {
+    @apply px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-medium text-sm;
+}
+
+
+
+.action-btn:hover {
+    @apply bg-blue-50 border-blue-300 shadow-md;
+}
+
+.action-btn:active {
+    @apply bg-blue-100;
+}
+
+/* Responsive toolbar */
+@media (max-width: 1024px) {
+    .toolbar-btn, .toolbar-select {
+        @apply px-2 py-1 text-sm;
+    }
+    
+    .action-btn {
+        @apply px-3 py-1 text-xs;
+    }
+    
+    .action-btn i {
+        @apply mr-1;
+    }
+}
+
+@media (max-width: 768px) {
+    .toolbar-btn, .toolbar-select {
+        @apply px-1 py-1 text-xs;
+    }
+    
+    .action-btn {
+        @apply px-2 py-1 text-xs;
+    }
+    
+    .action-btn span {
+        @apply hidden;
+    }
+    
+    .action-btn i {
+        @apply mr-0;
+    }
+    
+    .toolbar-select {
+        @apply max-w-20;
+    }
+}
+
+@media (max-width: 640px) {
+    .toolbar-btn, .toolbar-select {
+        @apply px-1 py-1 text-xs;
+    }
+    
+    .action-btn {
+        @apply px-1 py-1 text-xs;
+    }
+    
+    .action-btn i {
+        @apply text-sm;
+    }
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    @apply bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto;
+}
+
+.modal-close {
+    @apply text-gray-400 hover:text-gray-600 transition-colors p-1;
+}
+
+.modal-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+}
+
+.modal-textarea {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none;
+    min-height: 120px;
+}
+
+.modal-btn-primary {
+    @apply px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.modal-btn-secondary {
+    @apply px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+/* Editor content styles */
+#editor {
+    @apply prose prose-lg max-w-none rounded-lg border border-gray-200 shadow-sm;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    overflow-y: auto;
+}
+
+#editor:focus {
+    @apply outline-none border-blue-300 shadow-md;
+}
+
+#editor h1 {
+    @apply text-3xl font-bold text-gray-900 mb-4;
+}
+
+#editor h2 {
+    @apply text-2xl font-bold text-gray-900 mb-3;
+}
+
+#editor h3 {
+    @apply text-xl font-bold text-gray-900 mb-2;
+}
+
+#editor h4 {
+    @apply text-lg font-bold text-gray-900 mb-2;
+}
+
+#editor h5 {
+    @apply text-base font-bold text-gray-900 mb-2;
+}
+
+#editor h6 {
+    @apply text-sm font-bold text-gray-900 mb-2;
+}
+
+#editor p {
+    @apply text-gray-700 mb-4 leading-relaxed;
+}
+
+#editor blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4 bg-blue-50 rounded-r-lg;
+}
+
+#editor ul, #editor ol {
+    @apply mb-4 pl-6;
+}
+
+#editor li {
+    @apply mb-1;
+}
+
+#editor a {
+    @apply text-blue-500 hover:text-blue-700 underline;
+}
+
+#editor img {
+    @apply max-w-full h-auto rounded-lg shadow-md my-4;
+}
+
+#editor code {
+    @apply bg-blue-50 text-blue-800 px-2 py-1 rounded text-sm font-mono border border-blue-200;
+}
+
+#editor pre {
+    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+}
+
+#editor pre code {
+    @apply bg-transparent p-0;
+}
+
+#editor table {
+    @apply w-full border-collapse border border-gray-300 my-4;
+}
+
+#editor th {
+    @apply bg-gray-100 border border-gray-300 px-4 py-2 text-left font-semibold;
+}
+
+#editor td {
+    @apply border border-gray-300 px-4 py-2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .toolbar-btn, .toolbar-select {
+        @apply px-2 py-1 text-sm;
+    }
+    
+    .modal-content {
+        @apply mx-2 max-w-full;
+    }
+    
+    #editor {
+        @apply min-h-[400px];
+    }
+}
+
+/* Fix horizontal scrollbar issue */
+.bg-gray-100 {
+    overflow-x: hidden;
+}
+
+.max-w-7xl {
+    overflow-x: hidden;
+}
+
+/* Simple hover effects - no animations */
+.toolbar-btn:hover,
+.action-btn:hover,
+.toolbar-select:hover {
+    @apply bg-red-500 border-red-600;
+}
+
+/* Change icon color to white on hover */
+.toolbar-btn:hover i,
+.action-btn:hover i {
+    @apply text-white;
+}
+
+/* Animation for modals */
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar for HTML editor */
+#htmlCode::-webkit-scrollbar {
+    width: 8px;
+}
+
+#htmlCode::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded;
+}
+
+#htmlCode::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded hover:bg-gray-400;
+}
+
+/* Custom scrollbar for editor */
+#editor::-webkit-scrollbar {
+    width: 8px;
+}
+
+#editor::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded;
+}
+
+#editor::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded hover:bg-gray-400;
+}
+
+/* Ensure body and html take full height */
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Main container should take full available space */
+.max-w-7xl {
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Focus states for better accessibility */
+.toolbar-btn:focus-visible,
+.toolbar-select:focus-visible {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* Loading states */
+.loading {
+    @apply opacity-50 cursor-not-allowed;
+}
+
+/* Success/error states */
+.success {
+    @apply text-green-600;
+}
+
+.error {
+    @apply text-red-600;
+}
+
+/* Notification styles */
+.notification {
+    @apply fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full;
+}
+
+.notification.show {
+    @apply translate-x-0;
+}
+
+/* Table styles in editor */
+#editor table {
+    @apply w-full border-collapse border border-gray-300 my-4 rounded-lg overflow-hidden;
+}
+
+#editor th {
+    @apply bg-blue-50 border border-gray-300 px-4 py-2 text-left font-semibold text-blue-900;
+}
+
+#editor td {
+    @apply border border-gray-300 px-4 py-2;
+}
+
+/* Code block styles */
+#editor pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+}
+
+#editor pre code {
+    @apply bg-transparent p-0 text-sm;
+}
+
+/* Link styles */
+#editor a {
+    @apply text-blue-500 hover:text-blue-700 underline transition-colors;
+}
+
+/* Image styles */
+#editor img {
+    @apply max-w-full h-auto rounded-lg shadow-md my-4 border border-gray-200;
+}
+
+/* List styles */
+#editor ul {
+    list-style-type: disc;
+    margin-left: 2em;
+    padding-left: 1em;
+}
+
+#editor ol {
+    list-style-type: decimal;
+    margin-left: 2em;
+    padding-left: 1em;
+}
+
+#editor li {
+    margin-bottom: 0.25em;
+}
+
+/* Blockquote styles */
+#editor blockquote {
+    @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4 bg-gray-50 py-2;
+}
+
+/* Horizontal rule */
+#editor hr {
+    @apply border-t border-gray-300 my-6;
+}
+
+.editor-placeholder:empty:before {
+    content: attr(data-placeholder);
+    color: #a0aec0;
+    pointer-events: none;
+    position: absolute;
+    left: 1.5rem;
+    top: 1.5rem;
+    font-size: 1rem;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+#editor.drag-over {
+    outline: 2px solid #3b82f6;
+    background: #eff6ff;
+}
+
+.mention-dropdown {
+    position: absolute;
+    z-index: 1000;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 0.25rem 0;
+    font-size: 1rem;
+    max-height: 220px;
+    overflow-y: auto;
+    display: block;
+}
+.mention-dropdown.hidden {
+    display: none;
+}
+.mention-dropdown .mention-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.mention-dropdown .mention-item.active,
+.mention-dropdown .mention-item:hover {
+    background: #e0e7ef;
+}
+.mention {
+    background: #3b82f6;
+    color: #fff;
+    border-radius: 0.25rem;
+    padding: 0 0.4em;
+    margin: 0 0.1em;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+}
+.tag {
+    background: #22c55e;
+    color: #fff;
+    border-radius: 0.25rem;
+    padding: 0 0.4em;
+    margin: 0 0.1em;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.table-toolbar {
+    position: absolute;
+    z-index: 1100;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    font-size: 0.95rem;
+    align-items: center;
+    transition: opacity 0.15s;
+}
+.table-toolbar.hidden {
+    display: none;
+}
+.table-toolbar button {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.15s;
+}
+.table-toolbar button:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.image-toolbar {
+    position: absolute;
+    z-index: 1200;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+    font-size: 1rem;
+    align-items: center;
+    transition: opacity 0.15s;
+}
+.image-toolbar.hidden {
+    display: none;
+}
+.image-toolbar button {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background 0.15s;
+}
+.image-toolbar button:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+img.img-align-left {
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+    float: left;
+}
+img.img-align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+}
+img.img-align-right {
+    display: block;
+    margin-left: auto;
+    margin-right: 0;
+    float: right;
+}
+img.img-selected {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+body.dark-mode {
+    background: #181a1b;
+    color: #e5e7eb;
+}
+body.dark-mode .bg-white,
+body.dark-mode .toolbar,
+body.dark-mode .modal-content,
+body.dark-mode .mention-dropdown,
+body.dark-mode .table-toolbar {
+    background: #23272a !important;
+    color: #e5e7eb !important;
+    border-color: #374151 !important;
+}
+body.dark-mode .prose h1,
+body.dark-mode .prose h2,
+body.dark-mode .prose h3,
+body.dark-mode .prose h4,
+body.dark-mode .prose h5,
+body.dark-mode .prose h6 {
+    color: #f3f4f6;
+}
+body.dark-mode .toolbar-btn,
+body.dark-mode .action-btn,
+body.dark-mode .modal-btn-primary,
+body.dark-mode .modal-btn-secondary,
+body.dark-mode .mention-item,
+body.dark-mode .table-toolbar button {
+    background: #23272a;
+    color: #e5e7eb;
+    border-color: #374151;
+}
+body.dark-mode .toolbar-btn:hover,
+body.dark-mode .action-btn:hover,
+body.dark-mode .modal-btn-primary:hover,
+body.dark-mode .modal-btn-secondary:hover,
+body.dark-mode .mention-item.active,
+body.dark-mode .mention-item:hover,
+body.dark-mode .table-toolbar button:hover {
+    background: #3b82f6;
+    color: #fff;
+}
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #23272a;
+    color: #e5e7eb;
+    border-color: #374151;
+}
+body.dark-mode #editor {
+    background: #181a1b;
+    color: #e5e7eb;
+}
+body.dark-mode .editor-placeholder:empty:before {
+    color: #6b7280;
+}
+body.dark-mode .mention {
+    background: #2563eb;
+    color: #fff;
+}
+body.dark-mode .tag {
+    background: #059669;
+    color: #fff;
+}
+body.dark-mode h1, body.dark-mode .text-2xl.font-bold {
+    color: #fff !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* Preview-style fallback for editor area */
+#editor {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+}
+#editor h1, #editor h2, #editor h3, #editor h4, #editor h5, #editor h6 {
+    color: #2d3748;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+#editor h1 { font-size: 2.25rem; }
+#editor h2 { font-size: 1.875rem; }
+#editor h3 { font-size: 1.5rem; }
+#editor h4 { font-size: 1.25rem; }
+#editor h5 { font-size: 1.125rem; }
+#editor h6 { font-size: 1rem; }
+#editor p { margin-bottom: 1rem; }
+#editor ul, #editor ol { margin-bottom: 1rem; padding-left: 2rem; }
+#editor li { margin-bottom: 0.25rem; }
+#editor a { color: #3182ce; text-decoration: underline; }
+#editor a:hover { color: #2c5aa0; }
+#editor img { max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); margin: 1rem 0; }
+#editor blockquote {
+    border-left: 4px solid #3182ce;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #4a5568;
+    background-color: #f7fafc;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+#editor code {
+    background-color: #f7fafc;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+#editor pre {
+    background-color: #2d3748;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+#editor pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+}
+#editor table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+#editor th, #editor td {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
+    text-align: left;
+}
+#editor th {
+    background-color: #f7fafc;
+    font-weight: 600;
+}
+#editor hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 2rem 0;
+}
+
+/* Make editor area as wide as the toolbar */
+#editor {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#editor {
+    overflow-y: auto;
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+}
+#editor::-webkit-scrollbar {
+    width: initial;
+}
+#editor::-webkit-scrollbar-thumb {
+    background: initial;
+    border-radius: initial;
+}
+#editor::-webkit-scrollbar-track {
+    background: initial;
+    border-radius: initial;
+}

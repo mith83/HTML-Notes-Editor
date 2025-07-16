@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>miniB HTML Editor – Documentation & Manual</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #222; margin: 0; padding: 0; }
+        .container { max-width: 900px; margin: 2rem auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 2.5rem 2.5rem 2rem 2.5rem; }
+        h1, h2, h3 { color: #222831; }
+        h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.5rem; margin-top: 2rem; }
+        h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+        ul, ol { margin-left: 2rem; }
+        code, pre { background: #f1f5f9; color: #374151; border-radius: 4px; padding: 2px 6px; }
+        pre { padding: 1rem; overflow-x: auto; }
+        .feature-list { columns: 2 300px; -webkit-columns: 2 300px; -moz-columns: 2 300px; }
+        .feature-list li { margin-bottom: 0.5em; }
+        .tip { background: #e3f2fd; border-left: 4px solid #1976d2; padding: 0.75em 1em; margin: 1.5em 0; border-radius: 6px; }
+        .kbd { background: #ececec; border-radius: 3px; padding: 2px 6px; font-size: 0.95em; border: 1px solid #ccc; }
+        .toolbar-icons { display: flex; flex-wrap: wrap; gap: 1.5em 2em; margin: 1.5em 0 2em 0; }
+        .toolbar-icon { display: flex; align-items: center; gap: 0.7em; min-width: 180px; }
+        .toolbar-icon i { font-size: 1.2em; width: 1.5em; text-align: center; color: #222831; }
+        .screenshot { display: block; margin: 1.5em auto; border: 1px solid #e0e0e0; border-radius: 8px; max-width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .api-table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+        .api-table th, .api-table td { border: 1px solid #e0e0e0; padding: 0.5em 0.8em; text-align: left; }
+        .api-table th { background: #f1f5f9; }
+        .faq { margin-top: 2em; }
+        .faq h3 { margin-bottom: 0.2em; }
+        .footer { text-align: center; color: #888; font-size: 0.95em; margin-top: 2em; }
+        a { color: #1976d2; text-decoration: underline; }
+        a:hover { color: #0d47a1; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-book"></i> miniB HTML Editor – Documentation & Manual</h1>
+    <p class="footer">Licensed under <a href="https://opensource.org/license/mit" target="_blank">MIT license</a>. &copy; <script>document.write(new Date().getFullYear())</script> miniB HTML editor by <a href="https://github.com/ColeNikol" target="_blank"><u>ColeNikol</u></a>.</p>
+
+    <h2><i class="fas fa-certificate"></i> License</h2>
+    <pre>MIT License
+
+Copyright (c) <script>document.write(new Date().getFullYear())</script> ColeNikol
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre>
+
+    <h2><i class="fas fa-star"></i> Features</h2>
+    <ul class="feature-list">
+        <li><i class="fas fa-bold"></i> Rich text formatting (bold, italic, underline, strikethrough)</li>
+        <li><i class="fas fa-heading"></i> Headings (H1–H6), blockquotes</li>
+        <li><i class="fas fa-list-ul"></i> Ordered & unordered lists</li>
+        <li><i class="fas fa-align-left"></i> Text alignment (left, center, right, justify)</li>
+        <li><i class="fas fa-palette"></i> Text & background color pickers</li>
+        <li><i class="fas fa-link"></i> Insert links (with rel, new tab options)</li>
+        <li><i class="fas fa-image"></i> Insert/upload images (drag & drop, URL, alt, size)</li>
+        <li><i class="fas fa-table"></i> Table creation & editing</li>
+        <li><i class="fas fa-code"></i> Code blocks with language selection</li>
+        <li><i class="fas fa-history"></i> Undo/redo, history panel</li>
+        <li><i class="fas fa-moon"></i> Dark mode toggle</li>
+        <li><i class="fas fa-mobile-alt"></i> Mobile/touch optimization</li>
+        <li><i class="fas fa-download"></i> Download & save as HTML</li>
+        <li><i class="fas fa-eye"></i> Live preview</li>
+        <li><i class="fas fa-cogs"></i> Customizable styles & toolbar</li>
+    </ul>
+
+    <h2><i class="fas fa-toolbox"></i> Toolbar & Icons</h2>
+    <div class="toolbar-icons">
+        <div class="toolbar-icon"><i class="fas fa-bold"></i> Bold</div>
+        <div class="toolbar-icon"><i class="fas fa-italic"></i> Italic</div>
+        <div class="toolbar-icon"><i class="fas fa-underline"></i> Underline</div>
+        <div class="toolbar-icon"><i class="fas fa-strikethrough"></i> Strikethrough</div>
+        <div class="toolbar-icon"><i class="fas fa-heading"></i> Headings</div>
+        <div class="toolbar-icon"><i class="fas fa-list-ul"></i> Bullet List</div>
+        <div class="toolbar-icon"><i class="fas fa-list-ol"></i> Numbered List</div>
+        <div class="toolbar-icon"><i class="fas fa-align-left"></i> Align Left</div>
+        <div class="toolbar-icon"><i class="fas fa-align-center"></i> Align Center</div>
+        <div class="toolbar-icon"><i class="fas fa-align-right"></i> Align Right</div>
+        <div class="toolbar-icon"><i class="fas fa-align-justify"></i> Justify</div>
+        <div class="toolbar-icon"><i class="fas fa-palette"></i> Text Color</div>
+        <div class="toolbar-icon"><i class="fas fa-highlighter"></i> Background Color</div>
+        <div class="toolbar-icon"><i class="fas fa-link"></i> Insert Link</div>
+        <div class="toolbar-icon"><i class="fas fa-image"></i> Insert Image</div>
+        <div class="toolbar-icon"><i class="fas fa-table"></i> Insert Table</div>
+        <div class="toolbar-icon"><i class="fas fa-code"></i> Insert Code</div>
+        <div class="toolbar-icon"><i class="fas fa-eye"></i> Preview</div>
+        <div class="toolbar-icon"><i class="fas fa-save"></i> Save</div>
+        <div class="toolbar-icon"><i class="fas fa-download"></i> Download</div>
+        <div class="toolbar-icon"><i class="fas fa-folder-open"></i> Open</div>
+        <div class="toolbar-icon"><i class="fas fa-moon"></i> Dark Mode</div>
+    </div>
+
+    <h2><i class="fas fa-book-open"></i> Manual & Usage</h2>
+    <ol>
+        <li><b>Start Editing:</b> Click in the editor area and begin typing. Use the toolbar for formatting and inserting elements.</li>
+        <li><b>Insert Elements:</b> Use the toolbar to insert links, images, tables, and code blocks. All insertions use modern, accessible modal dialogs.</li>
+        <li><b>Upload Images:</b> Drag and drop images into the editor or use the image modal to upload or link images.</li>
+        <li><b>Mentions & Tags:</b> Type <span class="kbd">@</span> for user mentions or <span class="kbd">#</span> for tags to trigger autocomplete.</li>
+        <li><b>Preview & Download:</b> Use the <b>Preview</b> button to see your document in a new tab, and <b>Download</b> to save as an HTML file.</li>
+        <li><b>Dark Mode:</b> Click the <b>Dark Mode</b> button for a comfortable editing experience at night.</li>
+    </ol>
+    <div class="tip"><i class="fas fa-info-circle"></i> <b>Tip:</b> You can use keyboard shortcuts for most toolbar actions (e.g., <span class="kbd">Ctrl+B</span> for bold, <span class="kbd">Ctrl+S</span> to save).</div>
+
+    <h2><i class="fas fa-plug"></i> API Points</h2>
+    <table class="api-table">
+        <tr><th>Function</th><th>Description</th></tr>
+        <tr><td><code>showModal('modalId')</code></td><td>Open a modal dialog by ID.</td></tr>
+        <tr><td><code>closeModal('modalId')</code></td><td>Close a modal dialog by ID.</td></tr>
+        <tr><td><code>generateCompleteHTML(content, title)</code></td><td>Generate a full HTML document for download/preview.</td></tr>
+        <tr><td><code>insertImage(src, alt, width, height)</code></td><td>Insert an image at the caret position.</td></tr>
+        <tr><td><code>editor.innerHTML</code></td><td>Get/set the editor's HTML content.</td></tr>
+    </table>
+
+    <h2><i class="fas fa-cogs"></i> Customization & Advanced Usage</h2>
+    <ul>
+        <li><b>Remove Save Button:</b> In <code>index.php</code>, remove or comment out the <code>&lt;button id="saveFile" ...&gt;</code> in the toolbar section.</li>
+        <li><b>Change Default Paths:</b> In <code>save.php</code> and <code>open.php</code>, edit the <code>$uploadDir</code> and file path variables to your preferred directories for saving files and uploads.</li>
+        <li><b>Change Styles:</b> Edit <code>editor.css</code> to adjust colors, fonts, spacing, or add your own custom styles. You can also modify the Tailwind config in <code>index.php</code> for global changes.</li>
+        <li><b>Toolbar Customization:</b> Add, remove, or rearrange toolbar buttons in <code>index.php</code> as needed. Each button uses a <code>data-command</code> attribute for its action.</li>
+        <li><b>Modals:</b> All insert dialogs (link, image, table, code) are in <code>index.php</code> and can be customized for your workflow.</li>
+        <li><b>Dark Mode:</b> Tweak dark mode styles in <code>editor.css</code> under <code>body.dark-mode</code> and related selectors.</li>
+        <li><b>Keyboard Shortcuts:</b> See <code>editor.js</code> for shortcut logic and add your own as needed.</li>
+    </ul>
+
+    <h2><i class="fas fa-question-circle"></i> FAQ & Troubleshooting</h2>
+    <div class="faq">
+        <h3>How do I save my work?</h3>
+        <p>Click the <i class="fas fa-save"></i> Save button or use <span class="kbd">Ctrl+S</span>. You can also download as HTML.</p>
+        <h3>How do I upload images?</h3>
+        <p>Use the image modal to upload from your device or enter an image URL. Drag & drop is also supported.</p>
+        <h3>How do I change the editor's appearance?</h3>
+        <p>Edit <code>editor.css</code> or the Tailwind config in <code>index.php</code> for global style changes.</p>
+        <h3>Can I disable or hide certain features?</h3>
+        <p>Yes, simply remove the relevant button or modal from <code>index.php</code> or comment out the related JavaScript in <code>editor.js</code>.</p>
+        <h3>Where are my files saved?</h3>
+        <p>By default, files are saved in <code>assets/uploads/</code>. You can change this in <code>save.php</code> and <code>open.php</code>.</p>
+    </div>
+
+    <div class="footer">
+        <span class="text-xs">This project uses <a href="https://fontawesome.com/" target="_blank">Font Awesome</a> icons and portions of <a href="https://tailwindcss.com/" target="_blank">Tailwind CSS</a> for UI styling.</span><br><br>
+        <i class="fas fa-user"></i> Created by <a href="https://github.com/ColeNikol" target="_blank"><u>ColeNikol</u></a>.<br><br>
+        <i class="fas fa-heart"></i> Please consider <a href="https://cwallet.com/t/JZWJW87H" target="_blank"><u>supporting</u></a> this project.<br>
+        
+        
+    </div>
+</div>
+</body>
+</html> 
