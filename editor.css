@@ -757,26 +757,59 @@ html, body {
     color: #fff;
 }
 img.img-align-left {
-    display: block;
-    margin-left: 0;
-    margin-right: auto;
-    float: left;
+  display: block;
+  float: left;
+  margin-left: 0;
+  margin-right: 1.5em;
+  clear: both;
 }
 img.img-align-center {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    float: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+  clear: both;
 }
 img.img-align-right {
-    display: block;
-    margin-left: auto;
-    margin-right: 0;
-    float: right;
+  display: block;
+  float: right;
+  margin-left: 1.5em;
+  margin-right: 0;
+  clear: both;
 }
 img.img-selected {
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
+}
+img.img-resizable {
+  resize: both;
+  overflow: auto;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 100%;
+  max-height: 600px;
+  box-sizing: border-box;
+}
+.img-resize-wrapper.img-align-left {
+  display: block;
+  float: left;
+  margin-left: 0;
+  margin-right: 1.5em;
+  clear: both;
+}
+.img-resize-wrapper.img-align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+  clear: both;
+}
+.img-resize-wrapper.img-align-right {
+  display: block;
+  float: right;
+  margin-left: 1.5em;
+  margin-right: 0;
+  clear: both;
 }
 
 body.dark-mode {
@@ -946,4 +979,69 @@ body.dark-mode h1, body.dark-mode .text-2xl.font-bold {
 #editor::-webkit-scrollbar-track {
     background: initial;
     border-radius: initial;
+}
+
+/* Modal button color fix for dark mode */
+body.dark-mode .modal-btn-primary {
+  background-color: #3b82f6 !important;
+  color: #fff !important;
+}
+body.dark-mode .modal-btn-primary:hover {
+  background-color: #2563eb !important;
+}
+body.dark-mode .modal-btn-secondary {
+  background-color: #f3f4f6 !important;
+  color: #1f2937 !important;
+}
+body.dark-mode .modal-btn-secondary:hover {
+  background-color: #e5e7eb !important;
+}
+
+/* High-contrast improvements for dark mode modals */
+body.dark-mode .modal-content {
+  background: #23272a !important;
+  color: #f3f4f6 !important;
+  border: 1.5px solid #4b5563 !important;
+}
+body.dark-mode .modal-content label,
+body.dark-mode .modal-label {
+  color: #f3f4f6 !important;
+  font-weight: 600;
+}
+body.dark-mode .modal-input,
+body.dark-mode .modal-textarea {
+  background: #181a1b !important;
+  color: #f3f4f6 !important;
+  border: 1.5px solid #4b5563 !important;
+}
+body.dark-mode .modal-btn-primary {
+  background-color: #3b82f6 !important;
+  color: #fff !important;
+  border: 1.5px solid #2563eb !important;
+  font-weight: 600;
+}
+body.dark-mode .modal-btn-primary:hover {
+  background-color: #2563eb !important;
+}
+body.dark-mode .modal-btn-secondary {
+  background-color: #f3f4f6 !important;
+  color: #181a1b !important;
+  border: 1.5px solid #d1d5db !important;
+  font-weight: 600;
+}
+body.dark-mode .modal-btn-secondary:hover {
+  background-color: #e5e7eb !important;
+}
+body.dark-mode .modal-close {
+  color: #f3f4f6 !important;
+  opacity: 0.85;
+}
+body.dark-mode .modal-close:hover {
+  color: #fff !important;
+  opacity: 1;
+}
+body.dark-mode #snippetsList {
+  background: #181a1b !important;
+  color: #f3f4f6 !important;
+  border-color: #4b5563 !important;
 }

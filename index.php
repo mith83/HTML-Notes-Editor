@@ -69,7 +69,8 @@ SOFTWARE.
                     <!-- Headings -->
                     <div class="flex items-center gap-1 border-r border-gray-300 pr-3">
                         <select data-command="formatBlock" class="toolbar-select">
-                <option value="p">Paragraph</option>
+            <option value="" disabled selected>Paragraph</option>
+            <option value="p">Paragraph</option>
                 <option value="h1">Heading 1</option>
                 <option value="h2">Heading 2</option>
                 <option value="h3">Heading 3</option>
@@ -93,6 +94,12 @@ SOFTWARE.
                         </button>
                         <button data-command="strikeThrough" class="toolbar-btn" title="Strikethrough">
                             <i class="fas fa-strikethrough"></i>
+                        </button>
+                        <button data-command="superscript" class="toolbar-btn" title="Superscript (Ctrl+.)">
+                            <i class="fas fa-superscript"></i>
+                        </button>
+                        <button data-command="subscript" class="toolbar-btn" title="Subscript (Ctrl+,)">
+                            <i class="fas fa-subscript"></i>
                         </button>
                     </div>
 
@@ -149,12 +156,18 @@ SOFTWARE.
                             <i class="fas fa-code"></i>
                         </button>
                     </div>
+                    <!-- Code Snippets Tab -->
+                    <div class="flex items-center gap-1 border-r border-gray-300 pr-3 ml-2 pl-2">
+                        <button id="openSnippets" class="toolbar-btn" title="Code Snippets">
+                            <i class="fas fa-scroll mr-1"></i><span>Snippets</span>
+                        </button>
+                        <button id="showHtml" class="action-btn ml-2" title="View HTML">
+                            <i class="fas fa-code mr-2"></i><span>HTML</span>
+                        </button>
+                    </div>
 
                     <!-- Actions -->
                     <div class="flex items-center gap-2">
-                        <button id="showHtml" class="action-btn" title="View HTML">
-                            <i class="fas fa-code mr-2"></i><span>HTML</span>
-                        </button>
                         <button id="saveFile" class="action-btn" title="Save (Ctrl+S)">
                             <i class="fas fa-save mr-2"></i><span>Save</span>
                         </button>
@@ -435,6 +448,40 @@ SOFTWARE.
                     <i class="fas fa-save mr-1"></i>Save
                 </button>
                 <button id="cancelSaveModal" class="modal-btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Code Snippets Modal -->
+    <div id="snippetsModal" class="modal">
+        <div class="modal-content max-h-[80vh] overflow-y-auto" style="max-width: 600px; max-height:80vh; overflow-y:auto;">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-800">Code Snippets</h3>
+                <button class="modal-close" id="closeSnippetsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div class="flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Snippet Name</label>
+                        <input type="text" id="snippetName" class="modal-input" placeholder="Name">
+                    </div>
+                    <button id="addSnippetBtn" class="modal-btn-primary">Add</button>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Code</label>
+                    <textarea id="snippetCode" class="modal-textarea" placeholder="Enter code..."></textarea>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm">Sort by name:</label>
+                    <button id="sortAsc" class="modal-btn-secondary p-1 text-xs" title="Sort A-Z"><i class="fas fa-arrow-down-a-z"></i></button>
+                    <button id="sortDesc" class="modal-btn-secondary p-1 text-xs" title="Sort Z-A"><i class="fas fa-arrow-up-z-a"></i></button>
+                </div>
+                <div>
+                    <input type="text" id="filterSnippet" class="modal-input" placeholder="Filter by name...">
+                </div>
+                <div id="snippetsList" class="max-h-48 overflow-y-auto border rounded p-2 bg-gray-50" style="max-height:200px; overflow-y:auto;"></div>
             </div>
         </div>
     </div>

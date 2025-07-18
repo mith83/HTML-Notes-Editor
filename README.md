@@ -1,5 +1,5 @@
 # miniB-HTML-editor
-Online HTML editor...
+Yet another fully featured HTML editor...
 by ColeNikol
 
 A modern, feature-rich WYSIWYG HTML editor that creates complete, standalone HTML documents. Built with Font Awesome, Tailwind CSS and vanilla JavaScript for maximum compatibility and performance.
@@ -29,13 +29,12 @@ A modern, feature-rich WYSIWYG HTML editor that creates complete, standalone HTM
 ### ⌨️ **Keyboard Shortcuts**
 - `common keyboard shortcuts implemented for use
 
-### 🔧 **Advanced Features**
-- **HTML VIEW Mode**: Switch between WYSIWYG and raw HTML editing
-- **Responsive Design**: Works perfectly on desktop and mobile
-- **Modern UI**: Clean, professional interface with Tailwind CSS
-- **Image Upload**: Drag and drop or select images for upload
-- **Table Creation**: Visual table builder with customization options
-- **Code Highlighting**: Support for multiple programming languages
+### 🧰 **Advanced Features**
+- **Code Snippets Manager**: Add, edit, delete, filter, and copy code snippets for reuse. Snippets are stored in `assets/snippett.json` and can be managed from the toolbar or the admin panel.
+- **Admin Panel**: Access `assets/admin.php` (password: `123`) to manage all code snippets and uploaded files. Add, edit, or delete snippets, view and delete uploaded files, delete by type, or empty the uploads folder (except `index.php`).
+- **Improved Code Block Insertion**: Code blocks are always inserted at the caret position in the editor, never at the top. Each new code block is a separate block, not nested inside previous ones.
+- **Dark Mode Enhancements**: All modal dialogs, buttons, and snippet lists have improved contrast and appearance in dark mode for better accessibility.
+- **Uploads Management**: The admin panel allows you to preview, delete, or bulk-manage uploaded files in `assets/uploads`.
 
 ## 🚀 Installation
 
@@ -65,6 +64,18 @@ editor/
 2. **Use the toolbar** to format your text
 3. **Select text** and apply formatting
 4. **Use color pickers** to change text and background colors
+
+### Code Snippets
+
+1. Click the <i class="fas fa-scroll"></i> Snippets tab in the toolbar.
+2. Add new snippets, filter or sort them, and click the copy icon to copy a snippet to your clipboard for pasting anywhere in the editor.
+3. Snippets are saved in `assets/snippett.json` and can be managed from the admin panel as well.
+
+### Admin Panel
+
+1. Go to `assets/admin.php` and log in with password `123`.
+2. Manage all code snippets and uploaded files from a single interface.
+3. You can add, edit, or delete snippets, view and delete uploaded files, delete by type, or empty the uploads folder (except `index.php`).
 
 ### Inserting Content
 

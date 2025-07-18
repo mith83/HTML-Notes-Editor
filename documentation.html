@@ -73,12 +73,23 @@ SOFTWARE.
         <li><i class="fas fa-image"></i> Insert/upload images (drag & drop, URL, alt, size)</li>
         <li><i class="fas fa-table"></i> Table creation & editing</li>
         <li><i class="fas fa-code"></i> Code blocks with language selection</li>
+        <li><i class="fas fa-scroll"></i> <b>Code Snippets Manager</b> (add, edit, delete, filter, copy to clipboard)</li>
+        <li><i class="fas fa-user-shield"></i> <b>Admin Panel</b> for managing snippets and uploads</li>
         <li><i class="fas fa-history"></i> Undo/redo, history panel</li>
-        <li><i class="fas fa-moon"></i> Dark mode toggle</li>
+        <li><i class="fas fa-moon"></i> Dark mode toggle & improved contrast</li>
         <li><i class="fas fa-mobile-alt"></i> Mobile/touch optimization</li>
         <li><i class="fas fa-download"></i> Download & save as HTML</li>
         <li><i class="fas fa-eye"></i> Live preview</li>
         <li><i class="fas fa-cogs"></i> Customizable styles & toolbar</li>
+    </ul>
+
+    <h2><i class="fas fa-bolt"></i> New Features & Improvements</h2>
+    <ul>
+      <li><b>Code Snippets Manager:</b> Use the <i class="fas fa-scroll"></i> Snippets tab in the toolbar to add, edit, delete, filter, and copy code snippets. Snippets are saved in <code>assets/snippett.json</code> and can be copied to clipboard for quick reuse.</li>
+      <li><b>Admin Panel:</b> Access <code>assets/admin.php</code> (password: <code>123</code>) to manage all code snippets and uploaded files. You can add, edit, or delete snippets, view and delete uploaded files, delete by type, or empty the uploads folder (except <code>index.php</code>).</li>
+      <li><b>Improved Code Block Insertion:</b> Code blocks are now always inserted at the caret position in the editor, never at the top. Each new code block is a separate block, not nested inside previous ones.</li>
+      <li><b>Dark Mode Enhancements:</b> All modal dialogs, buttons, and snippet lists have improved contrast and appearance in dark mode for better accessibility.</li>
+      <li><b>Uploads Management:</b> The admin panel allows you to preview, delete, or bulk-manage uploaded files in <code>assets/uploads</code>.</li>
     </ul>
 
     <h2><i class="fas fa-toolbox"></i> Toolbar & Icons</h2>
@@ -110,10 +121,12 @@ SOFTWARE.
     <h2><i class="fas fa-book-open"></i> Manual & Usage</h2>
     <ol>
         <li><b>Start Editing:</b> Click in the editor area and begin typing. Use the toolbar for formatting and inserting elements.</li>
-        <li><b>Insert Elements:</b> Use the toolbar to insert links, images, tables, and code blocks. All insertions use modern, accessible modal dialogs.</li>
+        <li><b>Insert Elements:</b> Use the toolbar to insert links, images, tables, code blocks, and <b>code snippets</b>. All insertions use modern, accessible modal dialogs.</li>
+        <li><b>Code Snippets:</b> Click the <i class="fas fa-scroll"></i> Snippets tab in the toolbar. Add new snippets, filter or sort them, and click the copy icon to copy a snippet to your clipboard for pasting anywhere in the editor.</li>
+        <li><b>Admin Panel:</b> Go to <code>assets/admin.php</code> and log in with password <code>123</code>. Manage all code snippets and uploaded files from a single interface.</li>
         <li><b>Upload Images:</b> Drag and drop images into the editor or use the image modal to upload or link images.</li>
         <li><b>Mentions & Tags:</b> Type <span class="kbd">@</span> for user mentions or <span class="kbd">#</span> for tags to trigger autocomplete.</li>
-        <li><b>Preview & Download:</b> Use the <b>Preview</b> button to see your document in a new tab, and <b>Download</b> to save as an HTML file.</li>
+        <li><b>Preview & Download:</b> Use the <b>Preview</b> button to see your document in a new tab. <b>Save</b> will save your HTML file on the server in <code>/assets/uploads</code>. <b>Download</b> will download the file as HTML to your computer.</li>
         <li><b>Dark Mode:</b> Click the <b>Dark Mode</b> button for a comfortable editing experience at night.</li>
     </ol>
     <div class="tip"><i class="fas fa-info-circle"></i> <b>Tip:</b> You can use keyboard shortcuts for most toolbar actions (e.g., <span class="kbd">Ctrl+B</span> for bold, <span class="kbd">Ctrl+S</span> to save).</div>

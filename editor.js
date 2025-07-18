@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize editor with default content
     if (!editor.innerHTML.trim()) {
-        editor.innerHTML = '<h1>Welcome to miniB HTML Editor</h1><p>Start typing your content here. Use the toolbar above to format your text, insert images, tables, and more.</p><p>You can save your work as a complete HTML document that can be opened in any web browser.</p>';
+        editor.innerHTML = '<p>Welcome to miniB HTML Editor</p><p>Start typing your content here. Use the toolbar above to format your text, insert images, tables, and more.</p><p>You can save your work as a complete HTML document that can be opened in any web browser.</p>';
     }
     
     // Modal management functions
@@ -107,6 +107,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 showTableModal();
             } else if (command === 'insertCode') {
                 showCodeModal();
+            } else if (command === 'superscript' || command === 'subscript') {
+                document.execCommand(command, false, null);
+                editor.focus();
+            } else if (["justifyLeft", "justifyCenter", "justifyRight", "justifyFull"].includes(command)) {
+                // If an image is selected, align the image instead of text
+                if (selectedImg) {
+                    let target = selectedImg.parentElement && selectedImg.parentElement.classList.contains('img-resize-wrapper') ? selectedImg.parentElement : selectedImg;
+                    target.classList.remove('img-align-left', 'img-align-center', 'img-align-right');
+                    if (command === 'justifyLeft') {
+                        target.classList.add('img-align-left');
+                    } else if (command === 'justifyCenter') {
+                        target.classList.add('img-align-center');
+                    } else if (command === 'justifyRight') {
+                        target.classList.add('img-align-right');
+                    }
+                    editor.focus();
+                } else {
+                    document.execCommand(command, false, null);
+                    editor.focus();
+                }
             } else {
                 // Add active state for formatting commands
                 if (["bold", "italic", "underline", "strikeThrough"].includes(command)) {
@@ -121,10 +141,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Format block dropdown
     document.querySelector('.toolbar select[data-command]').addEventListener('change', function() {
         const command = this.getAttribute('data-command');
-        const value = this.value;
-        document.execCommand(command, false, value);
-        editor.focus();
-        this.value = 'p'; // Reset to paragraph
+        let value = this.value;
+        const selection = window.getSelection();
+        if (!value) return; // Ignore placeholder
+        if (value === 'p') {
+            // Try to convert heading to paragraph manually if needed
+            if (selection.rangeCount > 0) {
+                let range = selection.getRangeAt(0);
+                let node = range.startContainer;
+                // Find the closest block element
+                while (node && node !== editor && !(node.nodeType === 1 && /^H[1-6]$/i.test(node.tagName))) {
+                    node = node.parentNode;
+                }
+                if (node && /^H[1-6]$/i.test(node.tagName)) {
+                    // Replace heading with <p>
+                    const p = document.createElement('p');
+                    p.innerHTML = node.innerHTML;
+                    node.parentNode.replaceChild(p, node);
+                    // Move caret to new <p>
+                    range = document.createRange();
+                    range.selectNodeContents(p);
+                    range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    editor.focus();
+                } else {
+                    document.execCommand(command, false, 'P');
+                    editor.focus();
+                }
+            }
+        } else {
+            document.execCommand(command, false, value);
+            editor.focus();
+        }
+        // Reset dropdown to the placeholder
+        setTimeout(() => {
+            this.value = '';
+        }, 0);
     });
     
     // Text color picker
@@ -483,9 +536,26 @@ document.addEventListener('DOMContentLoaded', function() {
         showModal('tableModal');
     }
     
+    let savedCodeRange = null;
     function showCodeModal() {
         document.getElementById('codeContent').value = '';
         document.getElementById('codeLanguage').value = 'html';
+        // Save the current selection if it's inside the editor
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            let container = range.commonAncestorContainer;
+            while (container && container !== editor) {
+                container = container.parentNode;
+            }
+            if (container === editor) {
+                savedCodeRange = range.cloneRange();
+            } else {
+                savedCodeRange = null;
+            }
+        } else {
+            savedCodeRange = null;
+        }
         showModal('codeModal');
         document.getElementById('codeContent').focus();
     }
@@ -666,25 +736,36 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('insertCodeBtn').addEventListener('click', function() {
         const codeContent = document.getElementById('codeContent').value.trim();
         const language = document.getElementById('codeLanguage').value.trim();
-        
         if (codeContent) {
             const pre = document.createElement('pre');
             const code = document.createElement('code');
-            
             if (language) {
                 code.className = `language-${language}`;
             }
-            
             code.textContent = codeContent;
             pre.appendChild(code);
             pre.className = 'bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4';
-            
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
+            let inserted = false;
+            // Restore the saved selection if available
+            if (savedCodeRange) {
+                editor.focus();
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(savedCodeRange);
                 const range = selection.getRangeAt(0);
+                range.collapse(false);
                 range.insertNode(pre);
+                // Move caret after the inserted code block
+                range.setStartAfter(pre);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                inserted = true;
+                savedCodeRange = null;
             }
-            
+            if (!inserted) {
+                editor.appendChild(pre);
+            }
             closeModal('codeModal');
             editor.focus();
         }
@@ -1220,60 +1301,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return originalConfirm.apply(this, arguments);
     };
 
-    // Image alignment floating toolbar
-    let imageToolbar = document.getElementById('imageToolbar');
-    if (!imageToolbar) {
-        imageToolbar = document.createElement('div');
-        imageToolbar.id = 'imageToolbar';
-        imageToolbar.className = 'image-toolbar hidden';
-        imageToolbar.innerHTML = `
-            <button type="button" data-align="left" title="Align Left">⬅️</button>
-            <button type="button" data-align="center" title="Align Center">⬇️</button>
-            <button type="button" data-align="right" title="Align Right">➡️</button>
-        `;
-        document.body.appendChild(imageToolbar);
-    }
-    let selectedImg = null;
-    editor.addEventListener('click', function(e) {
-        if (e.target.tagName === 'IMG') {
-            selectedImg = e.target;
-            const rect = selectedImg.getBoundingClientRect();
-            imageToolbar.style.left = (rect.left + window.scrollX) + 'px';
-            imageToolbar.style.top = (rect.top + window.scrollY - imageToolbar.offsetHeight - 8) + 'px';
-            imageToolbar.classList.remove('hidden');
-            // Highlight selected image
-            selectedImg.classList.add('img-selected');
-        } else {
-            if (selectedImg) selectedImg.classList.remove('img-selected');
-            selectedImg = null;
-            imageToolbar.classList.add('hidden');
-        }
-    });
-    // Hide toolbar on editor blur
-    editor.addEventListener('blur', function() {
-        imageToolbar.classList.add('hidden');
-        if (selectedImg) selectedImg.classList.remove('img-selected');
-        selectedImg = null;
-    });
-    // Alignment button logic
-    imageToolbar.querySelectorAll('button[data-align]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (!selectedImg) return;
-            const align = this.getAttribute('data-align');
-            selectedImg.classList.remove('img-align-left', 'img-align-center', 'img-align-right');
-            if (align === 'left') {
-                selectedImg.classList.add('img-align-left');
-            } else if (align === 'center') {
-                selectedImg.classList.add('img-align-center');
-            } else if (align === 'right') {
-                selectedImg.classList.add('img-align-right');
-            }
-            imageToolbar.classList.add('hidden');
-            selectedImg.classList.remove('img-selected');
-            selectedImg = null;
-        });
-    });
-
     document.getElementById('downloadFile').addEventListener('click', function() {
         const content = editor.innerHTML;
         const title = 'Document';
@@ -1326,6 +1353,217 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (imageDropText) imageDropText.textContent = imageUploadInput.files[0].name;
             } else {
                 if (imageDropText) imageDropText.textContent = 'Drag & drop an image here, or click to select';
+            }
+        });
+    }
+
+    // === Code Snippets Modal Logic ===
+    const openSnippetsBtn = document.getElementById('openSnippets');
+    const snippetsModal = document.getElementById('snippetsModal');
+    const closeSnippetsModal = document.getElementById('closeSnippetsModal');
+    const addSnippetBtn = document.getElementById('addSnippetBtn');
+    const snippetNameInput = document.getElementById('snippetName');
+    const snippetCodeInput = document.getElementById('snippetCode');
+    const snippetsList = document.getElementById('snippetsList');
+    const filterSnippetInput = document.getElementById('filterSnippet');
+    const sortAscBtn = document.getElementById('sortAsc');
+    const sortDescBtn = document.getElementById('sortDesc');
+    let snippets = [];
+    let sortAsc = true;
+    let filterText = '';
+
+    function fetchSnippets() {
+        fetch('assets/snippet.php?action=read')
+            .then(r => r.json())
+            .then(data => {
+                snippets = Array.isArray(data) ? data : [];
+                renderSnippets();
+            })
+            .catch(() => { snippets = []; renderSnippets(); });
+    }
+    function saveSnippets() {
+        fetch('assets/snippet.php?action=write', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(snippets)
+        })
+        .then(() => fetchSnippets());
+    }
+    function renderSnippets() {
+        let filtered = snippets.filter(s => s.name.toLowerCase().includes(filterText.toLowerCase()));
+        filtered.sort((a, b) => sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+        snippetsList.innerHTML = '';
+        if (!filtered.length) {
+            snippetsList.innerHTML = '<div class="text-gray-400 text-sm">No snippets found.</div>';
+            return;
+        }
+        filtered.forEach((snippet, idx) => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between gap-2 border-b py-1';
+            div.innerHTML = `<span class=\"font-mono text-xs flex-1\">${snippet.name}</span>` +
+                `<button class=\"modal-btn-secondary copy-snippet p-1\" data-idx=\"${snippets.indexOf(snippet)}\" title=\"Copy\" aria-label=\"Copy\"><i class=\"fas fa-copy fa-sm\"></i></button>`;
+            snippetsList.appendChild(div);
+        });
+        snippetsList.querySelectorAll('.copy-snippet').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const idx = parseInt(this.getAttribute('data-idx'));
+                copySnippet(snippets[idx]);
+            });
+        });
+    }
+    function insertSnippet(snippet) {
+        if (!snippet) return;
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        code.textContent = snippet.code;
+        pre.appendChild(code);
+        pre.className = 'bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4';
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.insertNode(pre);
+        }
+        editor.focus();
+    }
+    function copySnippet(snippet) {
+        if (!snippet) return;
+        navigator.clipboard.writeText(snippet.code).then(function() {
+            showNotification('Snippet copied to clipboard', 'success');
+        }, function() {
+            showNotification('Failed to copy snippet', 'error');
+        });
+    }
+    openSnippetsBtn.addEventListener('click', function() {
+        snippetNameInput.value = '';
+        snippetCodeInput.value = '';
+        filterSnippetInput.value = '';
+        sortAsc = true;
+        filterText = '';
+        fetchSnippets();
+        showModal('snippetsModal');
+    });
+    closeSnippetsModal.addEventListener('click', function() {
+        closeModal('snippetsModal');
+    });
+    addSnippetBtn.addEventListener('click', function() {
+        const name = snippetNameInput.value.trim();
+        const code = snippetCodeInput.value;
+        if (!name) { showNotification('Snippet name required', 'error'); return; }
+        if (!code) { showNotification('Snippet code required', 'error'); return; }
+        if (snippets.some(s => s.name === name)) {
+            showNotification('Snippet name must be unique', 'error'); return;
+        }
+        snippets.push({ name, code });
+        saveSnippets();
+        snippetNameInput.value = '';
+        snippetCodeInput.value = '';
+    });
+    filterSnippetInput.addEventListener('input', function() {
+        filterText = this.value;
+        renderSnippets();
+    });
+    sortAscBtn.addEventListener('click', function() {
+        sortAsc = true;
+        renderSnippets();
+    });
+    sortDescBtn.addEventListener('click', function() {
+        sortAsc = false;
+        renderSnippets();
+    });
+
+    let selectedImg = null;
+    let imgResizeWrapper = null;
+    let imgAspectRatio = 1;
+    let isShiftResizing = false;
+    editor.addEventListener('click', function(e) {
+        if (e.target.tagName === 'IMG') {
+            selectedImg = e.target;
+            // Store aspect ratio
+            imgAspectRatio = (selectedImg.naturalWidth || selectedImg.width || 1) / (selectedImg.naturalHeight || selectedImg.height || 1);
+            // Wrap image in a resizable div
+            if (!selectedImg.parentElement.classList.contains('img-resize-wrapper')) {
+                imgResizeWrapper = document.createElement('div');
+                imgResizeWrapper.contentEditable = false;
+                imgResizeWrapper.className = 'img-resize-wrapper';
+                imgResizeWrapper.style.display = 'inline-block';
+                imgResizeWrapper.style.position = 'relative';
+                imgResizeWrapper.style.resize = 'both';
+                imgResizeWrapper.style.overflow = 'auto';
+                imgResizeWrapper.style.minWidth = '40px';
+                imgResizeWrapper.style.minHeight = '40px';
+                imgResizeWrapper.style.maxWidth = '100%';
+                imgResizeWrapper.style.maxHeight = '600px';
+                selectedImg.parentNode.insertBefore(imgResizeWrapper, selectedImg);
+                imgResizeWrapper.appendChild(selectedImg);
+                // Set wrapper size to image size
+                imgResizeWrapper.style.width = selectedImg.width ? selectedImg.width + 'px' : selectedImg.offsetWidth + 'px';
+                imgResizeWrapper.style.height = selectedImg.height ? selectedImg.height + 'px' : selectedImg.offsetHeight + 'px';
+            } else {
+                imgResizeWrapper = selectedImg.parentElement;
+            }
+            // Sync image size on wrapper resize
+            let lastWidth = imgResizeWrapper.offsetWidth;
+            let lastHeight = imgResizeWrapper.offsetHeight;
+            // Listen for Shift key
+            window.addEventListener('keydown', function(e) { if (e.key === 'Shift') isShiftResizing = true; });
+            window.addEventListener('keyup', function(e) { if (e.key === 'Shift') isShiftResizing = false; });
+            imgResizeWrapper._resizeObserver = new ResizeObserver(() => {
+                if (imgResizeWrapper && selectedImg) {
+                    if (!isShiftResizing) {
+                        let w = imgResizeWrapper.offsetWidth;
+                        let h = imgResizeWrapper.offsetHeight;
+                        // Lock aspect ratio
+                        h = Math.round(w / imgAspectRatio);
+                        imgResizeWrapper.style.height = h + 'px';
+                    }
+                    selectedImg.style.width = imgResizeWrapper.offsetWidth + 'px';
+                    selectedImg.style.height = imgResizeWrapper.offsetHeight + 'px';
+                    lastWidth = imgResizeWrapper.offsetWidth;
+                    lastHeight = imgResizeWrapper.offsetHeight;
+                }
+            });
+            imgResizeWrapper._resizeObserver.observe(imgResizeWrapper);
+            // Highlight selected image
+            selectedImg.classList.add('img-selected');
+        } else {
+            if (selectedImg) {
+                selectedImg.classList.remove('img-selected');
+                // Remove wrapper and observer
+                if (selectedImg.parentElement && selectedImg.parentElement.classList.contains('img-resize-wrapper')) {
+                    const wrapper = selectedImg.parentElement;
+                    if (wrapper._resizeObserver) wrapper._resizeObserver.disconnect();
+                    transferAlignmentClass(wrapper, selectedImg);
+                    wrapper.parentNode.insertBefore(selectedImg, wrapper);
+                    wrapper.remove();
+                }
+            }
+            selectedImg = null;
+            imgResizeWrapper = null;
+        }
+    });
+    // On blur, clear selection and remove wrapper
+    editor.addEventListener('blur', function() {
+        if (selectedImg) {
+            selectedImg.classList.remove('img-selected');
+            if (selectedImg.parentElement && selectedImg.parentElement.classList.contains('img-resize-wrapper')) {
+                const wrapper = selectedImg.parentElement;
+                if (wrapper._resizeObserver) wrapper._resizeObserver.disconnect();
+                transferAlignmentClass(wrapper, selectedImg);
+                wrapper.parentNode.insertBefore(selectedImg, wrapper);
+                wrapper.remove();
+            }
+        }
+        selectedImg = null;
+        imgResizeWrapper = null;
+    });
+    // When removing the wrapper, transfer alignment class back to the image
+    function transferAlignmentClass(wrapper, img) {
+        ['img-align-left', 'img-align-center', 'img-align-right'].forEach(cls => {
+            if (wrapper.classList.contains(cls)) {
+                img.classList.add(cls);
+                wrapper.classList.remove(cls);
+            } else {
+                img.classList.remove(cls);
             }
         });
     }
