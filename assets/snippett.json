@@ -1,0 +1,14 @@
+[
+    {
+        "name": "testing divs really",
+        "code": "<div class=\"myDiv\">\r\n  <h2>This is a heading in a div element<\/h2>\r\n  <p>This is some text in a div element.<\/p>\r\n<h1>This is the final test<\/h1>\r\n<\/div>"
+    },
+    {
+        "name": "test",
+        "code": "<div class=\"myDiv\">\r\n  <h2>This is a heading in a div element<\/h2>\r\n  <p>This is some text in a div element.<\/p>\r\n<\/div>"
+    },
+    {
+        "name": "clock",
+        "code": "window.onload = displayClock();\r\nfunction displayClock(){\r\n  var display = new Date().toLocaleTimeString();\r\n  document.body.innerHTML = display;\r\n  setTimeout(displayClock, 1000); \r\n}"
+    }
+]
