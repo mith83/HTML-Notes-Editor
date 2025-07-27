@@ -2,7 +2,7 @@
 Yet another fully featured HTML editor...
 by ColeNikol
 
-A modern, feature-rich WYSIWYG HTML editor that creates complete, standalone HTML documents. Built with Font Awesome, Tailwind CSS and vanilla JavaScript for maximum compatibility and performance.
+A modern, feature-rich WYSIWYG HTML online editor that creates complete, standalone HTML documents. Built with Font Awesome, Tailwind CSS and vanilla JavaScript for maximum compatibility and performance.
 
 ## ✨ Features
 
@@ -23,7 +23,7 @@ A modern, feature-rich WYSIWYG HTML editor that creates complete, standalone HTM
 ### 💾 **File Management**
 - **Save HTML**: Generate standalone HTML documents with embedded CSS saved on server
 - **Download**: Download generated HTML file
-- **Open Files**: Load previously saved documents
+- **Open Files**: Load previously saved documents from server
 - **Preview**: Preview documents in a new browser tab
 
 ### ⌨️ **Keyboard Shortcuts**
@@ -53,6 +53,7 @@ editor/
 ├── save.php           # File saving and image upload
 ├── open.php           # File loading
 ├── assets/
+    admin.php
 │   └── uploads/       # Uploaded images
 └── README.md          # This file
 ```
