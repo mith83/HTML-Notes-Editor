@@ -1,4 +1,4 @@
-# miniB-HTML-editor
+# HTML-Notes-editor
 Yet another fully featured WYSIWIG HTML editor...
 by ColeNikol
 
